@@ -1,0 +1,282 @@
+meta:
+  title: "Unified CS + Computational Science + ML Mastery Roadmap"
+  version: "graph-spec-v1.0"
+  default_layer: "LAYER:ML-Quant"
+
+layers:
+  - id: "LAYER:Logic"
+    title: "Logic & Hardware"
+    scope:
+      - "Computation as state + transition"
+      - "Gates → ALU → registers → RAM → CPU"
+    capstone: "CAPSTONE:L1"
+
+  - id: "LAYER:Arch"
+    title: "Computer Architecture & ISA"
+    scope:
+      - "ISA semantics and datapath intuition"
+      - "Memory hierarchy and performance reasoning"
+    capstone: "CAPSTONE:L2"
+
+  - id: "LAYER:Assembly"
+    title: "Assembly & Machine Execution"
+    scope:
+      - "ARM64 basics on Apple Silicon"
+      - "Stacks, calling convention, compiler output"
+    capstone: "CAPSTONE:L3"
+
+  - id: "LAYER:OS"
+    title: "Operating Systems"
+    scope:
+      - "Processes/threads, virtual memory, syscalls"
+      - "I/O, filesystems, concurrency failure modes"
+    capstone: "CAPSTONE:L4"
+
+  - id: "LAYER:Compilers"
+    title: "Compilers & Language Implementation"
+    scope:
+      - "Parse → AST → IR/bytecode → codegen"
+      - "Abstraction costs and optimization intuition"
+    capstone: "CAPSTONE:L5"
+
+  - id: "LAYER:Paradigms"
+    title: "Programming Paradigms"
+    scope:
+      - "Imperative vs functional vs declarative"
+      - "Structure to reduce bugs"
+    capstone: "CAPSTONE:L6"
+
+  - id: "LAYER:Algo"
+    title: "Algorithms & Data Structures"
+    scope:
+      - "Correctness + complexity"
+      - "Graphs/DP/greedy, real scaling intuition"
+    capstone: "CAPSTONE:L7"
+
+  - id: "LAYER:Perf"
+    title: "Performance Engineering"
+    scope:
+      - "Profiling, locality, measurement-driven optimization"
+      - "When and why systems are slow"
+    capstone: "CAPSTONE:L8"
+
+  - id: "LAYER:DistData"
+    title: "Distributed Systems & Data"
+    scope:
+      - "Failures, retries, ordering, consistency"
+      - "Dataflow, transactions, storage models"
+    capstone: "CAPSTONE:L9"
+
+  - id: "LAYER:CompMath"
+    title: "Computational Mathematics & Physics"
+    scope:
+      - "Numerical stability, ODE/PDE discretization"
+      - "Simulation kernels and validation"
+    capstone: "CAPSTONE:LC"
+
+  - id: "LAYER:ML-Quant"
+    title: "ML & Quant Systems"
+    scope:
+      - "Learning + evaluation + decision systems"
+      - "Non-IID, risk-sensitive, regime-aware design"
+    capstone: "CAPSTONE:L10"
+
+lessons:
+  - id: "L10.6"
+    layer: "LAYER:ML-Quant"
+    title: "Generalization under finite data"
+    mechanism_objective: "Explain how finite samples + inductive bias produce generalization limits."
+    timebox_minutes: 240
+    outputs:
+      - "Generalization error decomposition notes"
+      - "Simple generalization stress test experiment"
+      - "Checkpoint response"
+
+  - id: "L10.7"
+    layer: "LAYER:ML-Quant"
+    title: "Non-IID evaluation and leakage prevention"
+    mechanism_objective: "Explain and implement time-respecting evaluation that blocks leakage paths."
+    timebox_minutes: 240
+    outputs:
+      - "Temporal Evaluation Suite module"
+      - "Naive vs honest validation comparison"
+      - "Leakage diagnosis write-up"
+      - "Checkpoint response"
+
+  - id: "L10.8"
+    layer: "LAYER:ML-Quant"
+    title: "Risk-sensitive objectives and asymmetric loss"
+    mechanism_objective: "Explain how objectives encode risk preferences and change learned behavior."
+    timebox_minutes: 240
+    outputs:
+      - "Risk Objective Module"
+      - "Ranking reversal experiment"
+      - "Checkpoint response"
+
+  - id: "L10.9"
+    layer: "LAYER:ML-Quant"
+    title: "Regime detection and conditioned evaluation"
+    mechanism_objective: "Explain how non-stationarity breaks unconditional metrics and how conditioning exposes failures."
+    timebox_minutes: 240
+    outputs:
+      - "Regime-Aware Evaluation Engine"
+      - "Backtest overfitting simulation"
+      - "Checkpoint response"
+
+  - id: "L10.10"
+    layer: "LAYER:ML-Quant"
+    title: "Capstone: unified learning/evaluation/decision system"
+    mechanism_objective: "Explain learning, evaluation, and decision-making as a single causal system under risk and regime shift."
+    timebox_minutes: 0
+    outputs:
+      - "Unified Decision System codebase"
+      - "Evaluation report (walk-forward + regime-conditioned)"
+      - "Risk-aware decision policy"
+      - "Defense write-up"
+
+concepts:
+  - id: "CONCEPT:Leakage"
+    definition: "Any path where future information influences training/validation decisions."
+    why_load_bearing: "It creates false confidence and collapses out-of-sample performance."
+
+  - id: "CONCEPT:NonIID"
+    definition: "Data samples are dependent and/or distribution shifts over time."
+    why_load_bearing: "IID assumptions make many evaluation methods invalid."
+
+  - id: "CONCEPT:RiskSensitiveObjective"
+    definition: "An objective that penalizes asymmetric loss and tail outcomes, not just average error."
+    why_load_bearing: "Decision systems fail via tails, not means."
+
+  - id: "CONCEPT:RegimeShift"
+    definition: "Structural change in the data-generating process across time."
+    why_load_bearing: "Average metrics hide regime-specific failure."
+
+artifacts:
+  - id: "ARTIFACT:TemporalEvaluationSuite"
+    interface_summary: "evaluate(model, data, split_policy) -> report"
+    tests_required:
+      - "fails when leakage introduced"
+      - "walk-forward splits are strictly forward-only"
+
+  - id: "ARTIFACT:RiskObjectiveModule"
+    interface_summary: "objective(outcomes, config) -> scalar + diagnostics"
+    tests_required:
+      - "ranking reversal demonstrated across objectives"
+
+  - id: "ARTIFACT:RegimeAwareEvaluationEngine"
+    interface_summary: "conditioned_report(data, regime_fn, evaluator) -> per-regime metrics"
+    tests_required:
+      - "metrics differ across regimes on synthetic shift"
+
+  - id: "ARTIFACT:UnifiedDecisionSystem"
+    interface_summary: "data -> features -> model -> evaluator -> decision_policy -> actions"
+    tests_required:
+      - "no leakage assertions"
+      - "regime-conditioned report generated"
+      - "risk constraints enforced"
+
+edges:
+  # Hard prereqs within Layer 10
+  - type: "PREREQ_HARD"
+    from: "L10.6"
+    to: "L10.7"
+    gate_checks:
+      - "Why does shuffling time-series violate causality?"
+      - "What independence assumption does random CV make?"
+
+  - type: "PREREQ_HARD"
+    from: "L10.7"
+    to: "L10.8"
+    gate_checks:
+      - "Why can a good predictor still be a bad decision system?"
+      - "What does leakage do to tail-risk estimates?"
+
+  - type: "PREREQ_HARD"
+    from: "L10.8"
+    to: "L10.9"
+    gate_checks:
+      - "How can identical expected returns hide different ruin probabilities?"
+      - "Why are averaged metrics regime-blind?"
+
+  - type: "PREREQ_HARD"
+    from: "L10.7"
+    to: "L10.10"
+    gate_checks:
+      - "Explain embargo/purging and why it’s necessary."
+      - "Explain how leakage enters via feature construction."
+
+  - type: "PREREQ_HARD"
+    from: "L10.8"
+    to: "L10.10"
+    gate_checks:
+      - "Explain why 'do nothing' must be allowed."
+      - "Explain asymmetry and tail penalties mechanistically."
+
+  - type: "PREREQ_HARD"
+    from: "L10.9"
+    to: "L10.10"
+    gate_checks:
+      - "Explain why average performance is not robustness."
+      - "Explain conditioned evaluation and what it reveals."
+
+  # Concepts linking (optional edges)
+  - type: "PREREQ_HARD"
+    from: "CONCEPT:NonIID"
+    to: "L10.7"
+    gate_checks:
+      - "Define non-IID and name one concrete violation in markets."
+
+  - type: "PREREQ_HARD"
+    from: "CONCEPT:Leakage"
+    to: "L10.7"
+    gate_checks:
+      - "Give one leakage path that comes from normalization."
+
+  - type: "PREREQ_HARD"
+    from: "CONCEPT:RiskSensitiveObjective"
+    to: "L10.8"
+    gate_checks:
+      - "What does a symmetric loss assume about costs?"
+
+  - type: "PREREQ_HARD"
+    from: "CONCEPT:RegimeShift"
+    to: "L10.9"
+    gate_checks:
+      - "Explain regime shift as structural change, not noise."
+
+  # Produces artifacts
+  - type: "PRODUCES"
+    from: "L10.7"
+    to: "ARTIFACT:TemporalEvaluationSuite"
+    artifact_contract: "Strict forward-only splits + leakage detection tests."
+
+  - type: "PRODUCES"
+    from: "L10.8"
+    to: "ARTIFACT:RiskObjectiveModule"
+    artifact_contract: "Multiple objectives + diagnostics + ranking reversal demo."
+
+  - type: "PRODUCES"
+    from: "L10.9"
+    to: "ARTIFACT:RegimeAwareEvaluationEngine"
+    artifact_contract: "Per-regime reports + selection bias simulation."
+
+  - type: "PRODUCES"
+    from: "L10.10"
+    to: "ARTIFACT:UnifiedDecisionSystem"
+    artifact_contract: "End-to-end integration + honest evaluation + risk-aware policy."
+
+  # Uses artifacts (capstone depends on previous artifacts)
+  - type: "USES_ARTIFACT"
+    from: "L10.10"
+    to: "ARTIFACT:TemporalEvaluationSuite"
+    why: "Capstone evaluation must be leakage-free and time-respecting."
+
+  - type: "USES_ARTIFACT"
+    from: "L10.10"
+    to: "ARTIFACT:RiskObjectiveModule"
+    why: "Capstone decisions must reflect risk preferences explicitly."
+
+  - type: "USES_ARTIFACT"
+    from: "L10.10"
+    to: "ARTIFACT:RegimeAwareEvaluationEngine"
+    why: "Capstone must report regime-conditioned performance, not only averages."
